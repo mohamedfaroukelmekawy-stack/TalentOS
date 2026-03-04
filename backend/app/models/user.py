@@ -1,6 +1,6 @@
 import uuid
 import enum
-from datetime import datetime, timezone
+from datetime import datetime
 from sqlalchemy import String, Boolean, Enum, DateTime, ForeignKey, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy.dialects.postgresql import UUID
@@ -27,6 +27,10 @@ class User(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     department: Mapped["Department"] = relationship("Department", back_populates="users")
-    assessments: Mapped[list["Assessment"]] = relationship("Assessment", back_populates="employee")
+    assessments: Mapped[list["Assessment"]] = relationship(
+        "Assessment",
+        back_populates="employee",
+        foreign_keys="[Assessment.employee_id]",
+    )
     dev_plans: Mapped[list["DevPlan"]] = relationship("DevPlan", back_populates="employee")
     documents: Mapped[list["Document"]] = relationship("Document", back_populates="employee")

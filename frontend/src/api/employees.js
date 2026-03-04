@@ -1,0 +1,19 @@
+import api from '../utils/axiosInstance'
+
+export const getEmployees = (params) =>
+  api.get('/employees', { params })
+
+export const getEmployee = (id) =>
+  api.get(`/employees/${id}`)
+
+export const createEmployee = (data) =>
+  api.post('/employees', data)
+
+export const updateEmployee = (id, data) =>
+  api.put(`/employees/${id}`, data)
+
+export const deactivateEmployee = (id) =>
+  api.delete(`/employees/${id}`)
+
+export const getMyProfile = () =>
+  api.get('/employees/me')

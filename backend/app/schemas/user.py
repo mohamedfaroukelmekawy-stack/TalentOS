@@ -1,3 +1,4 @@
+
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
@@ -47,3 +48,7 @@ class PaginatedUsers(BaseModel):
     page: int
     page_size: int
     pages: int
+
+
+# Alias — both names work, same class
+UserListResponse = PaginatedUsers
