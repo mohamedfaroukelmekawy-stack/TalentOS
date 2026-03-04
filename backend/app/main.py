@@ -10,6 +10,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from app.config import settings
 from app.database import init_db
 from app.routers import auth, employees, skills, assessments, reports, ai
+from app.routers.employees import dept_router
 
 logging.basicConfig(
     level=logging.INFO if not settings.DEBUG else logging.DEBUG,
@@ -81,6 +82,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["Authentication"])
 app.include_router(employees.router, prefix="/api/v1/employees", tags=["Employees"])
+app.include_router(dept_router, prefix="/api/v1/departments", tags=["Departments"])
 app.include_router(skills.router, prefix="/api/v1/skills", tags=["Skills"])
 app.include_router(assessments.router, prefix="/api/v1/assessments", tags=["Assessments"])
 app.include_router(reports.router, prefix="/api/v1/reports", tags=["Reports"])

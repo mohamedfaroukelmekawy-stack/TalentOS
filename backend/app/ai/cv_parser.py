@@ -1,4 +1,6 @@
 import logging
+import json
+import re
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -47,7 +49,7 @@ CV Text:
 
 Respond in a structured format."""
 
-    extracted = await generate_text(prompt)
+    extracted = generate_text(prompt)
 
     return {
         "document_id": doc.id,
@@ -76,10 +78,8 @@ CV: {text[:2000]}
 
 Skills JSON array:"""
 
-    result = await generate_text(prompt)
+    result = generate_text(prompt)
 
-    import json
-    import re
     match = re.search(r'\[.*?\]', result, re.DOTALL)
     if match:
         try:

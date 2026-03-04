@@ -1,3 +1,4 @@
+
 import logging
 import math
 from typing import Optional
@@ -7,10 +8,9 @@ from sqlalchemy.orm import selectinload
 
 from app.models.user import User, RoleEnum
 from app.models.department import Department
-from app.models.assessment import Assessment
-from app.models.skill import DepartmentSkill, Skill
 from app.auth.password import hash_password
 from app.schemas.user import UserCreate, UserUpdate, UserResponse, PaginatedUsers
+from app.schemas.skill import DepartmentCreate, DepartmentUpdate, DepartmentResponse
 from fastapi import HTTPException, status
 
 logger = logging.getLogger(__name__)
@@ -112,4 +112,47 @@ async def update_employee(db: AsyncSession, employee_id: str, data: UserUpdate) 
 async def delete_employee(db: AsyncSession, employee_id: str) -> None:
     user = await get_employee(db, employee_id)
     user.is_active = False
+    await db.flush()
+
+
+# ─── Department functions ─────────────────────────────────────────────────────
+
+async def create_department(db: AsyncSession, data: DepartmentCreate) -> Department:
+    existing = await db.execute(select(Department).where(Department.name == data.name))
+    if existing.scalar_one_or_none():
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Department already exists")
+
+    dept = Department(name=data.name, description=data.description)
+    db.add(dept)
+    await db.flush()
+    await db.refresh(dept)
+    return dept
+
+
+async def list_departments(db: AsyncSession) -> list[Department]:
+    result = await db.execute(select(Department).order_by(Department.name))
+    return result.scalars().all()
+
+
+async def get_department(db: AsyncSession, department_id: str) -> Department:
+    result = await db.execute(select(Department).where(Department.id == department_id))
+    dept = result.scalar_one_or_none()
+    if not dept:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Department not found")
+    return dept
+
+
+async def update_department(db: AsyncSession, department_id: str, data: DepartmentUpdate) -> Department:
+    dept = await get_department(db, department_id)
+    update_data = data.model_dump(exclude_none=True)
+    for field, value in update_data.items():
+        setattr(dept, field, value)
+    await db.flush()
+    await db.refresh(dept)
+    return dept
+
+
+async def delete_department(db: AsyncSession, department_id: str) -> None:
+    dept = await get_department(db, department_id)
+    await db.delete(dept)
     await db.flush()
