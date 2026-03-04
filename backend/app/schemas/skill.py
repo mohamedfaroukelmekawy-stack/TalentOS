@@ -1,38 +1,64 @@
 from pydantic import BaseModel
 from typing import Optional
-from datetime import datetime
 
 
 class SkillBase(BaseModel):
     name: str
-    description: Optional[str] = None
     category: Optional[str] = None
+    description: Optional[str] = None
 
 
 class SkillCreate(SkillBase):
     pass
 
 
+class SkillUpdate(BaseModel):
+    name: Optional[str] = None
+    category: Optional[str] = None
+    description: Optional[str] = None
+
+
 class SkillResponse(BaseModel):
     id: str
     name: str
-    description: Optional[str] = None
     category: Optional[str] = None
-    created_at: datetime
+    description: Optional[str] = None
 
     model_config = {"from_attributes": True}
 
 
 class DepartmentSkillCreate(BaseModel):
     skill_id: str
-    required_level: int = 3
+    required_level: Optional[int] = None
 
 
 class DepartmentSkillResponse(BaseModel):
     id: str
     department_id: str
     skill_id: str
-    required_level: int
-    skill: SkillResponse
+    required_level: Optional[int] = None
+    skill: Optional[SkillResponse] = None
+
+    model_config = {"from_attributes": True}
+
+
+class DepartmentBase(BaseModel):
+    name: str
+    description: Optional[str] = None
+
+
+class DepartmentCreate(DepartmentBase):
+    pass
+
+
+class DepartmentUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+
+
+class DepartmentResponse(BaseModel):
+    id: str
+    name: str
+    description: Optional[str] = None
 
     model_config = {"from_attributes": True}

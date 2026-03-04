@@ -45,3 +45,6 @@ class EmployeeGapReport(BaseModel):
     avg_gap: float
     skills_at_level: int
     skills_below_level: int
+
+
+GapAnalysisResponse = EmployeeGapReport

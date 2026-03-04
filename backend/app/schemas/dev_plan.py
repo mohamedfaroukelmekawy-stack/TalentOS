@@ -1,3 +1,4 @@
+
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime
@@ -30,3 +31,20 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     reply: str
     sources: list[str] = []
+
+
+class GeneratePlanRequest(BaseModel):
+    employee_id: str
+    notes: Optional[str] = None
+
+
+class CVParseRequest(BaseModel):
+    employee_id: str
+    filename: Optional[str] = None
+
+
+class CVParseResponse(BaseModel):
+    employee_id: str
+    skills_extracted: list[str] = []
+    raw_text: Optional[str] = None
+    status: str = "parsed"
