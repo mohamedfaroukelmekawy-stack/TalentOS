@@ -1,14 +1,23 @@
+
 import logging
 import cohere
 from app.config import settings
-from app.ai.embedder import get_cohere_client
 
 logger = logging.getLogger(__name__)
 
+_sync_client: cohere.Client | None = None
 
-async def generate_text(prompt: str, system_preamble: str = "", max_tokens: int = 1500) -> str:
-    client = get_cohere_client()
-    response = await client.chat(
+
+def get_sync_client() -> cohere.Client:
+    global _sync_client
+    if _sync_client is None:
+        _sync_client = cohere.Client(api_key=settings.COHERE_API_KEY)
+    return _sync_client
+
+
+def generate_text(prompt: str, system_preamble: str = "", max_tokens: int = 1500) -> str:
+    client = get_sync_client()
+    response = client.chat(
         model=settings.COHERE_GENERATE_MODEL,
         message=prompt,
         preamble=system_preamble or "You are TalentOS AI, an expert in employee development and skills gap analysis.",
@@ -17,19 +26,19 @@ async def generate_text(prompt: str, system_preamble: str = "", max_tokens: int 
     return response.text
 
 
-async def generate_with_history(
+def generate_with_history(
     message: str,
     chat_history: list[dict],
     preamble: str = "",
     max_tokens: int = 1000,
 ) -> str:
-    client = get_cohere_client()
+    client = get_sync_client()
     cohere_history = []
     for msg in chat_history:
         role = "USER" if msg["role"] == "user" else "CHATBOT"
         cohere_history.append({"role": role, "message": msg["content"]})
 
-    response = await client.chat(
+    response = client.chat(
         model=settings.COHERE_GENERATE_MODEL,
         message=message,
         chat_history=cohere_history,

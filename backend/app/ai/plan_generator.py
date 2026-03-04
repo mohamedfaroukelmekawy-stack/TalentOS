@@ -1,4 +1,6 @@
+
 import logging
+from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -55,7 +57,7 @@ Generate a comprehensive, personalized 12-week development plan that:
 
 Format the plan with clear sections: Executive Summary, Weekly Schedule, Resources, Success Metrics."""
 
-    content = await generate_text(prompt, max_tokens=2000)
+    content = generate_text(prompt, max_tokens=2000)
     skills_targeted = [g.skill_name for g in top_gaps]
 
     existing_res = await db.execute(
@@ -80,5 +82,4 @@ Format the plan with clear sections: Executive Summary, Weekly Schedule, Resourc
 
 
 def _current_quarter() -> int:
-    from datetime import datetime
     return (datetime.now().month - 1) // 3 + 1

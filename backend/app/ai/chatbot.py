@@ -1,3 +1,4 @@
+
 import logging
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -32,7 +33,7 @@ async def chat(db: AsyncSession, request: ChatRequest, employee_id: str) -> Chat
         )
 
     history = [{"role": m.role, "content": m.content} for m in request.history]
-    reply = await generate_with_history(
+    reply = generate_with_history(
         message=message_with_context,
         chat_history=history,
         preamble=PREAMBLE,
